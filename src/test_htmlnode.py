@@ -1,5 +1,7 @@
 import unittest
+from textnode import TextNode, NodeType, TextType
 from htmlnode import HTMLNode, LeafNode, ParentNode
+from main import text_node_to_html_node
 
 class TestTextNode(unittest.TestCase):
     def test_eq(self):
@@ -47,8 +49,8 @@ class TestTextNode(unittest.TestCase):
             ParentNode("ul", [LeafNode("i", "Typical leaf value", {"color": "blue"})]), 
             ParentNode("ul", [LeafNode("b", "Second typical leaf value", {"color": "white"})])])
 
-        print(f"Actual: {grandparent_node1.to_html()}")
-        print(f"Expected: <div><ul><i color='blue'>Typical leaf value</i></ul><ul><b color='white'>Second typical leaf value</b></ul>")
+##        print(f"Actual: {grandparent_node1.to_html()}")
+##        print(f"Expected: <div><ul><i color='blue'>Typical leaf value</i></ul><ul><b color='white'>Second typical leaf value</b></ul>")
 
         assert parent_node.to_html() == "<div><b>hello</b></div>"
         assert grandparent_node.to_html() == "<div><p>Text of a grandchildren</p></div>"
@@ -60,6 +62,26 @@ class TestTextNode(unittest.TestCase):
             assert False, "Value should have been passed"
         except ValueError:
             assert True
+
+###
+# text node'y do html node'a
+###     
+        try:
+            text_node_to_html_node(TextNode("Typical text node", TextType.NORMAL))
+            text_node_to_html_node(TextNode("Bolded one", TextType.BOLD))
+            text_node_to_html_node(TextNode("Italic one", TextType.ITALIC))
+            text_node_to_html_node(TextNode("\# Piece of code - print('hello world')", TextType.CODE))
+            text_node_to_html_node(TextNode("", TextType.LINK, "https://google.pl/"))
+            text_node_to_html_node(TextNode("Alt for image", TextType.IMAGE, "https://google.pl/"))
+            assert True
+        except Exception:
+            assert False
+        try:
+            text_node_to_html_node(TextNode("Test of exception", "exception"))
+            assert False, "Known text type"
+        except Exception:
+            assert True
+
 
 if __name__ == "__main__":
     unittest.main()
