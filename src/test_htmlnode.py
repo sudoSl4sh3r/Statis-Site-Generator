@@ -1,7 +1,7 @@
 import unittest
 from textnode import TextNode, NodeType, TextType
 from htmlnode import HTMLNode, LeafNode, ParentNode
-from main import text_node_to_html_node
+from main import text_node_to_html_node, split_nodes_delimiter
 
 class TestTextNode(unittest.TestCase):
     def test_eq(self):
@@ -81,6 +81,25 @@ class TestTextNode(unittest.TestCase):
             assert False, "Known text type"
         except Exception:
             assert True
+
+###
+# split_nodes_delimiter test
+###
+        
+        to_split_node = TextNode("This is text with a `code block` word.", TextType.NORMAL)
+        to_split_node1 = TextNode("This is text with a **bold** word.", TextType.NORMAL)
+        to_split_node2 = TextNode("This is text with a *italic* word.", TextType.NORMAL)
+        to_split_node3 = TextNode("This is text without a special markdowned word.", TextType.NORMAL)
+        to_split_node4 = TextNode("This is text with **wrong** type.", TextType.BOLD)
+        try:
+            nodes_delimited = split_nodes_delimiter([to_split_node], "`", TextType.CODE)
+            nodes_delimited1 = split_nodes_delimiter([to_split_node1, to_split_node2], "*", TextType.ITALIC)
+            nodes_delimited2 = split_nodes_delimiter([to_split_node3], "**", TextType.BOLD)
+            nodes_delimited3 = split_nodes_delimiter([to_split_node1], "*", TextType.ITALIC)
+            nodes_delimited4 = split_nodes_delimiter([to_split_node4], "`", TextType.CODE)
+            assert True
+        except Exception:
+            assert False
 
 
 if __name__ == "__main__":
