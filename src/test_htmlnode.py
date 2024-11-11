@@ -1,7 +1,7 @@
 import unittest
 from textnode import TextNode, NodeType, TextType
 from htmlnode import HTMLNode, LeafNode, ParentNode
-from main import text_node_to_html_node, split_nodes_delimiter
+from main import text_node_to_html_node, split_nodes_delimiter, extract_markdown_images, extract_markdown_links
 
 class TestTextNode(unittest.TestCase):
     def test_eq(self):
@@ -101,6 +101,17 @@ class TestTextNode(unittest.TestCase):
         except Exception:
             assert False
 
+###
+# extract_markdown_images - list of tuples
+###
+        text = "Text with an image ![imaginery](https://i.imgur.com/aKa0qIh.gif) and ![one more](https://google.pl/)."
+        text1 = "Text with a link [goto google](https://google.pl/) or [goto youtube](https://youtube.com/)."
+        try:
+            extract_markdown_images(text)
+            extract_markdown_links(text1)
+            assert True
+        except Exception:
+            assert False
 
 if __name__ == "__main__":
     unittest.main()
