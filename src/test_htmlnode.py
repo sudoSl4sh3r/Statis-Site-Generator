@@ -1,7 +1,7 @@
 import unittest
 from textnode import TextNode, NodeType, TextType
 from htmlnode import HTMLNode, LeafNode, ParentNode
-from main import text_node_to_html_node, split_nodes_delimiter, extract_markdown_images, extract_markdown_links
+from main import text_node_to_html_node, split_nodes_delimiter, extract_markdown_images, extract_markdown_links, split_nodes_image
 
 class TestTextNode(unittest.TestCase):
     def test_eq(self):
@@ -109,6 +109,25 @@ class TestTextNode(unittest.TestCase):
         try:
             extract_markdown_images(text)
             extract_markdown_links(text1)
+            assert True
+        except Exception:
+            assert False
+
+###
+# split_nodes_image test
+###
+        to_split_node_image = [TextNode("This is text with an ![alt text](https://google.pl/) image.", TextType.NORMAL),
+                               TextNode("This is another text with an ![other alt](https://google.pl/) image.", TextType.NORMAL),
+                               TextNode("This is a text without an image.", TextType.NORMAL)
+        ]
+        to_split_node_image1 = [TextNode("Different text with an ![alt text](https://google.pl/) image one, and ![alt text1](https://google.pl/) another image.", TextType.NORMAL)]
+        to_split_node_image2 = [TextNode("![altt](https://google.pl/)", TextType.NORMAL)]
+        to_split_node_image3 = [TextNode("![alt textt](https://google.pl/) Images ![alt texxt](https://google.pl/) mixed.", TextType.NORMAL)]
+        try:
+            print(split_nodes_image(to_split_node_image))
+            print(split_nodes_image(to_split_node_image1))
+            print(split_nodes_image(to_split_node_image2))
+            print(split_nodes_image(to_split_node_image3))
             assert True
         except Exception:
             assert False
