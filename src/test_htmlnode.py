@@ -1,7 +1,11 @@
 import unittest
 from textnode import TextNode, NodeType, TextType
 from htmlnode import HTMLNode, LeafNode, ParentNode
-from main import text_node_to_html_node, split_nodes_delimiter, extract_markdown_images, extract_markdown_links, split_nodes_image, split_nodes_link, text_to_textnodes, markdown_to_blocks
+from markdown_to_blocks import markdown_to_blocks
+from text_to_textnodes import text_to_textnodes
+from main import text_node_to_html_node, extract_markdown_images, extract_markdown_links
+from split_nodes_image_and_link import split_nodes_image, split_nodes_link
+from split_nodes_delimiter import split_nodes_delimiter
 
 class TestTextNode(unittest.TestCase):
     def test_eq(self):
