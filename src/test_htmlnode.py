@@ -1,7 +1,7 @@
 import unittest
 from textnode import TextNode, NodeType, TextType
 from htmlnode import HTMLNode, LeafNode, ParentNode
-from main import text_node_to_html_node, split_nodes_delimiter, extract_markdown_images, extract_markdown_links, split_nodes_image
+from main import text_node_to_html_node, split_nodes_delimiter, extract_markdown_images, extract_markdown_links, split_nodes_image, split_nodes_link
 
 class TestTextNode(unittest.TestCase):
     def test_eq(self):
@@ -123,13 +123,44 @@ class TestTextNode(unittest.TestCase):
         to_split_node_image1 = [TextNode("Different text with an ![alt text](https://google.pl/) image one, and ![alt text1](https://google.pl/) another image.", TextType.NORMAL)]
         to_split_node_image2 = [TextNode("![altt](https://google.pl/)", TextType.NORMAL)]
         to_split_node_image3 = [TextNode("![alt textt](https://google.pl/) Images ![alt texxt](https://google.pl/) mixed.", TextType.NORMAL)]
-        try:
-            print(split_nodes_image(to_split_node_image))
-            print(split_nodes_image(to_split_node_image1))
-            print(split_nodes_image(to_split_node_image2))
-            print(split_nodes_image(to_split_node_image3))
+
+        #print(split_nodes_image(to_split_node_image))
+        #print(split_nodes_image(to_split_node_image1))
+        #print(split_nodes_image(to_split_node_image2))
+        #print(split_nodes_image(to_split_node_image3))
+
+        if (len(split_nodes_image(to_split_node_image)) == 7 and len(split_nodes_image(to_split_node_image1)) == 5 and len(split_nodes_image(to_split_node_image2)) == 1 and len(split_nodes_image(to_split_node_image3)) == 4):
             assert True
-        except Exception:
+        else:
+            assert False
+    
+###
+# split_nodes_links test
+###
+        to_split_node_link = [
+            TextNode("This is text with a [google](https://google.pl/) link.", TextType.NORMAL),
+            TextNode("This is another text with a [googlelink!](https://google.pl/) link.", TextType.NORMAL),
+            TextNode("This is a text without a link.", TextType.NORMAL)
+        ]
+        to_split_node_link1 = [TextNode("Different text with a [googlelink](https://google.pl/) link one, and [googlelink1](https://google.pl/) another link.", TextType.NORMAL)]
+        to_split_node_link2 = [TextNode("[google](https://google.pl/)", TextType.NORMAL)]
+        to_split_node_link3 = [TextNode("[googel](https://google.pl/) Links [googel1](https://google.pl/) mixed.", TextType.NORMAL)]
+
+        if (len(split_nodes_link(to_split_node_link)) == 7 and len(split_nodes_link(to_split_node_link1)) == 5 and len(split_nodes_link(to_split_node_link2)) == 1 and len(split_nodes_link(to_split_node_link3)) == 4):
+            assert True
+        else:
+            assert False
+
+###
+# test both splits
+###
+        to_split_node_img_link = [
+            TextNode("This is text with both [google link](https://google.pl/) and an image ![alt](https://google.pl/).", TextType.NORMAL),
+            TextNode("This is a text with neither of them.", TextType.NORMAL)
+        ]
+        if len(split_nodes_link(split_nodes_image(to_split_node_img_link))) == 6:
+            assert True
+        else:
             assert False
 
 if __name__ == "__main__":
