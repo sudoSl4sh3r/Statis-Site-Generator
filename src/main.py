@@ -96,6 +96,12 @@ def text_to_textnodes(text):
     type_delimit = split_nodes_link(type_delimit)
     return type_delimit
 
+def markdown_to_blocks(markdown):
+    splitted_blocks = markdown.split("\n\n")
+    clean_blocks = [block.strip() for block in splitted_blocks if block.strip() != ""]
+
+    return clean_blocks
+
 def main():
     return
 
