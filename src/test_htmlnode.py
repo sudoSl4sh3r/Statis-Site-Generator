@@ -1,7 +1,7 @@
 import unittest
 from textnode import TextNode, NodeType, TextType
 from htmlnode import HTMLNode, LeafNode, ParentNode
-from main import text_node_to_html_node, split_nodes_delimiter, extract_markdown_images, extract_markdown_links, split_nodes_image, split_nodes_link
+from main import text_node_to_html_node, split_nodes_delimiter, extract_markdown_images, extract_markdown_links, split_nodes_image, split_nodes_link, text_to_textnodes
 
 class TestTextNode(unittest.TestCase):
     def test_eq(self):
@@ -162,6 +162,19 @@ class TestTextNode(unittest.TestCase):
             assert True
         else:
             assert False
+
+###
+# text_to_textnodes test
+###
+        text = "This is a **bolded text**, because we love code: `hello world`, *all rights reserved*. For more, check [my site](https://google.pl/) (just kidding). Image copyrighted: ![copyrighted one](https://google.pl/)."
+        listed_nodes = text_to_textnodes(text)
+        if type(listed_nodes) is list:
+            print(listed_nodes)
+            assert True
+        else:
+            assert False
+
+
 
 if __name__ == "__main__":
     unittest.main()
