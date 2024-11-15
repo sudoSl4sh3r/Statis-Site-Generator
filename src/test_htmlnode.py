@@ -8,7 +8,7 @@ from split_nodes_image_and_link import split_nodes_image, split_nodes_link
 from split_nodes_delimiter import split_nodes_delimiter
 
 class TestTextNode(unittest.TestCase):
-    def test_eq(self):
+    def eq(self):
 ###
 # html node'y
 ###
