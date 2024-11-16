@@ -3,6 +3,7 @@ from textnode import TextType
 from htmlnode import LeafNode
 from markdown_to_html_node import markdown_to_html_node
 from htmlnode import HTMLNode, ParentNode, LeafNode
+from pathlib import Path
 
 def text_node_to_html_node(text_node):
     type_list = []
@@ -87,9 +88,38 @@ def generate_page(from_path, template_path, dest_path):
     
     return f"Generated page in {dest_path}!"
 
+def generate_pages_recursive(dir_path_content, template_path, dest_dir_path):
+    print(f"Generating page from {dir_path_content} to {dest_dir_path}, using {template_path}...")
+    
+    for item in os.listdir(dir_path_content):
+        item_path = os.path.join(dir_path_content, item)
+        dest_path = os.path.join(dest_dir_path, item)
+        dest_path = Path(dest_path)
+        html_path = dest_path.with_suffix(".html") # changing the .md to .html
+        if os.path.isdir(item_path):
+            generate_pages_recursive(item_path, template_path, dest_path)
+        else:
+            templ_file = open(template_path, mode="r")
+            template = templ_file.read()
+            templ_file.close()
+            md_file = open(item_path, mode="r")
+            markdown = md_file.read()
+            md_file.close()
+            html_nodes = markdown_to_html_node(markdown)
+            article = ""
+            article += html_nodes.to_html()
+            template = template.replace("{{ Title }}", extract_title(markdown))
+            template = template.replace("{{ Content }}", article)
+            os.makedirs(html_path.parent, exist_ok=True)
+
+            with open (f"{html_path}", "w") as file:
+                file.write(template)
+
+    return f"Generated page in {dest_dir_path}!"
+
 def main():
 
     copying_static_to_public()
-    generate_page("./content/index.md", "template.html", "./public/index.html")
+    generate_pages_recursive("./content", "template.html", "./public")
 
 main()
