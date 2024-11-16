@@ -36,17 +36,19 @@ class TestMarkdownToHTMLNode(unittest.TestCase):
     def test_mixed_block_conversion(self):
         markdown = "A normal block, that should be a paragraph, with a **bold** text and `code`."
         node = markdown_to_html_node(markdown)
-        print(node.to_html())
         assert node.to_html() == "<div><p>A normal block, that should be a paragraph, with a <b>bold</b> text and <code>code</code>.</p></div>"
 
     def test_mixed1_block_conversion(self):
         markdown = ">This is a **bolded quote**.\n\n1. And this is \n2. an ordered list."
         node = markdown_to_html_node(markdown)
-        print(node.to_html())
         assert node.to_html() == "<div><blockquote>This is a <b>bolded quote</b>.</blockquote><ol><li>And this is </li><li>an ordered list.</li></ol></div>"
 
     def test_mixed2_block_conversion(self):
-        markdown = "- An *unordered* list\n- one more\n\n# h1 heading with [a link](https://google.pl/)."
+        markdown = "1. An *ordered* list\n2. one more\n\n# h1 heading with [a link](https://google.pl/)."
         node = markdown_to_html_node(markdown)
-        print(node.to_html())
-        assert node.to_html() == "<div><ul><li>An <i>unordered</i> list</li><li>one more</li></ul><h1>h1 heading with <a href='https://google.pl/'>a link</a>.</h1></div>"
+        assert node.to_html() == "<div><ol><li>An <i>ordered</i> list</li><li>one more</li></ol><h1>h1 heading with <a href='https://google.pl/'>a link</a>.</h1></div>"
+
+    def test_mixed3_block_conversion(self):
+        markdown = "* An *ordered* list\n* one more\n\n# h1 heading with [a link](https://google.pl/)."
+        node = markdown_to_html_node(markdown)
+        assert node.to_html() == "<div><ul><li>An <i>ordered</i> list</li><li>one more</li></ul><h1>h1 heading with <a href='https://google.pl/'>a link</a>.</h1></div>"

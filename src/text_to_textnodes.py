@@ -21,7 +21,7 @@ def text_to_textnodes(text, block_type=None):
     type_delimit = split_nodes_delimiter(nodes, "`", TextType.CODE)
     type_delimit = split_nodes_delimiter(type_delimit, "**", TextType.BOLD)
     type_delimit = split_nodes_delimiter(type_delimit, "*", TextType.ITALIC)
-    print(type_delimit)
     type_delimit = split_nodes_image(type_delimit)
     type_delimit = split_nodes_link(type_delimit)
+
     return type_delimit

@@ -26,15 +26,6 @@ def markdown_to_html_node(markdown): #input: full markdown document - output: ht
             for item in list_of_leaf_nodes:
                 header_node.children.append(item) # append the nodes to its parent, h{x}
             div_node.children.append(header_node) # add parent h{x} to the general node
-
-        elif block_type == "ordered_list": 
-            ol_node = ParentNode("ol", children=[]) # create parent ol tag
-            no_digits_block = re.sub(r"(\d. )", "", block)
-            list_of_text_nodes = text_to_textnodes(no_digits_block)
-            list_of_leaf_nodes = text_nodes_to_leaf_nodes(list_of_text_nodes)
-            for item in list_of_leaf_nodes:
-                ol_node.children.append(LeafNode("li", item.value)) # append every point to the parent ol
-            div_node.children.append(ol_node) # append parent to the general node
         
         elif block_type == "paragraph":
             p_node = ParentNode("p", children=[]) # create parent p tag
@@ -55,13 +46,49 @@ def markdown_to_html_node(markdown): #input: full markdown document - output: ht
 
         elif block_type == "unordered_list":
             ul_node = ParentNode("ul", children=[]) # create parent ul tag
-            list_item_content = block.split("-")
-            list_item_content = "".join(list_item_content)
-            print(list_item_content)
-            list_of_text_nodes = text_to_textnodes(list_item_content) # transform to list of textnodes
-            list_of_leaf_nodes = text_nodes_to_leaf_nodes(list_of_text_nodes) # transform textnodes to leafnodes
-            for item in list_of_leaf_nodes:
-                ul_node.children.append(LeafNode("li", item.value)) # append the found items to the parent, ul
+            list_item_content = []
+            list_list_item_content = []
+            block_list = block.splitlines(True) # preserves \n
+            
+            for line in block_list:
+                if line.startswith("* "):
+                    content = line.split("* ", 1)
+                    content.remove("")
+                    list_list_item_content.append(content) # making a list inside a list
+                elif line.startswith("- "):
+                    content = line.split("- ", 1)
+                    content.remove("")
+                    list_list_item_content.append(content) # making a list inside a list
+            
+            for item in list_list_item_content: 
+                list_item_content.extend(item) # getting rid of unnesessary list
+
+            for item in list_item_content:
+                node_item = text_to_textnodes(item)
+                leaf_node = text_nodes_to_leaf_nodes(node_item)
+                li_node = ParentNode("li", leaf_node)
+                ul_node.children.append(li_node)
+            
             div_node.children.append(ul_node) # append parent to the general node
+
+        elif block_type == "ordered_list": 
+            ol_node = ParentNode("ol", children=[]) # create parent ol tag
+            list_list_item_content = []
+            list_item_content = []
+            block_list = block.splitlines(True) # preserves \n
+
+            for line in block_list:
+                content = re.sub(r"(\d+\. )", "", line)
+                list_list_item_content.append(content)
+
+            for item in list_list_item_content:
+                list_item_content.append(item)
+            
+            for item in list_list_item_content:
+                node_item = text_to_textnodes(item)
+                leaf_node = text_nodes_to_leaf_nodes(node_item)
+                li_node = ParentNode("li", leaf_node)
+                ol_node.children.append(li_node)
+            div_node.children.append(ol_node) # append parent to the general node
 
     return div_node
