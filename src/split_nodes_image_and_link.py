@@ -1,4 +1,4 @@
-from main import extract_markdown_images, extract_markdown_links
+from extract_markdown_img_links import extract_markdown_images, extract_markdown_links
 from textnode import TextNode, TextType
 import re
 

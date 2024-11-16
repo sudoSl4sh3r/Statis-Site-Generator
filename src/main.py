@@ -1,6 +1,8 @@
 import re, os, shutil
-from textnode import TextNode, TextType
-from htmlnode import HTMLNode, LeafNode, ParentNode
+from textnode import TextType
+from htmlnode import LeafNode
+from markdown_to_html_node import markdown_to_html_node
+from htmlnode import HTMLNode, ParentNode, LeafNode
 
 def text_node_to_html_node(text_node):
     type_list = []
@@ -20,11 +22,6 @@ def text_node_to_html_node(text_node):
         return LeafNode("img", "", {'src': f'{text_node.url}', 'alt': f'{text_node.text}'})
     elif text_node.text_type == TextType.NORMAL:
         return LeafNode("", text_node.text)
-
-def extract_markdown_images(text):
-    return re.findall(r"!\[([^\[\]]*)\]\(([^\(\)]*)\)", text)
-def extract_markdown_links(text):
-    return re.findall(r"(?<!!)\[([^\[\]]*)\]\(([^\(\)]*)\)", text)
 
 def deleting_public_contents():
     if os.path.exists("./public"):
@@ -54,8 +51,45 @@ def copying_static_to_public():
     copy_directory("./static", "./public")
     print("Copying completed successfully.")
 
+def extract_title(markdown):
+    blocks = markdown.split("\n")
+    title = ""
+    for block in blocks:
+        if re.match(r"# ", block):
+            title = block
+            title = re.sub("# ", "", title).strip()
+            break
+    if title == "":
+        raise Exception("There is no h1 tag in your document.")
+    return title
+
+def generate_page(from_path, template_path, dest_path):
+    print(f"Generating page from {from_path} to {dest_path}, using {template_path}...")
+    md_file = open(from_path, mode="r")
+    templ_file = open(template_path, mode="r")
+
+    markdown = md_file.read()
+    template = templ_file.read()
+
+    md_file.close()
+    templ_file.close()
+
+    html_nodes = markdown_to_html_node(markdown)
+    article = ""
+    article += html_nodes.to_html()
+
+    template = template.replace("{{ Title }}", extract_title(markdown))
+    template = template.replace("{{ Content }}", article)
+
+    os.makedirs(os.path.dirname(dest_path), exist_ok=True)
+    with open(f"{dest_path}", "w") as file:
+        file.write(template)
+    
+    return f"Generated page in {dest_path}!"
+
 def main():
+
     copying_static_to_public()
-    return
+    generate_page("./content/index.md", "template.html", "./public/index.html")
 
 main()
